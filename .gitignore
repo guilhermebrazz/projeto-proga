@@ -1,0 +1,4 @@
+#Comandos Tkinter
+
+.title('') #muda titulo da aba
+.geometry('WidthxHeight±x±y') #muda o width e height da aba
