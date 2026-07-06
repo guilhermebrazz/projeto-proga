@@ -12,7 +12,7 @@ class Paint:
         self.fim_x = None
         self.fim_y = None
         self.forma = None
-
+        self.cor = None
         #Menu de formas
         self.barra = tk.Frame(root)
         self.barra.pack()
@@ -23,6 +23,13 @@ class Paint:
         self.btn_oval.pack(side="left")
         self.btn_circulo = tk.Button(self.barra, text="Círculo", command = self.circulo)
         self.btn_circulo.pack(side="left")
+        self.btn_c1 = tk.Button(self.barra, text="Azul", command = self.azul)
+        self.btn_c1.pack(side="left")
+        self.btn_c2 = tk.Button(self.barra, text="Vermelho", command = self.vermelho)
+        self.btn_c2.pack(side="left")
+        self.btn_c3 = tk.Button(self.barra, text="Verde", command = self.verde)
+        self.btn_c3.pack(side="left")
+        
 
         #Configurações do canvas (parte que desenha)
         self.canvas = tk.Canvas(root, bg="white", width=600, height=600)
@@ -39,7 +46,13 @@ class Paint:
         self.forma = "oval"
     def circulo(self):
         self.forma = "circulo"
-
+    def azul(self):
+        self.cor = "blue"
+    def vermelho(self):
+        self.cor = "red"
+    def verde(self):
+        self.cor = "green"
+    
     def inicio(self, event):
 
         #captura as coordenadas de x e de y no momento em que a funcao é chamada
@@ -56,15 +69,15 @@ class Paint:
         #mostra a figura
         if self.forma == "oval":
             
-            self.canvas.create_oval(self.ini_x, self.ini_y, self.fim_x, self.fim_y)
+            self.canvas.create_oval(self.ini_x, self.ini_y, self.fim_x, self.fim_y, fill= self.cor )
         
         elif self.forma == "retangulo":
 
-            self.canvas.create_rectangle(self.ini_x, self.ini_y, self.fim_x, self.fim_y)
+            self.canvas.create_rectangle(self.ini_x, self.ini_y, self.fim_x, self.fim_y, fill = self.cor)
         elif self.forma == "circulo":
 
             raio = ( (self.ini_x - self.fim_x) **2 + (self.ini_y - self.fim_y) **2 ) ** 0.5
-            self.canvas.create_oval(self.ini_x - raio, self.ini_y - raio, self.ini_x + raio, self.ini_y + raio)
+            self.canvas.create_oval(self.ini_x - raio, self.ini_y - raio, self.ini_x + raio, self.ini_y + raio, fill = self.cor)
         
         
         
