@@ -1,5 +1,7 @@
 import tkinter as tk
 
+
+
 class Paint:
 
 
@@ -19,6 +21,8 @@ class Paint:
 
         self.btn_oval = tk.Button(self.barra, text="Oval", command= self.oval)
         self.btn_oval.pack(side="left")
+        self.btn_circulo = tk.Button(self.barra, text="Círculo", command = self.circulo)
+        self.btn_circulo.pack(side="left")
 
         #Configurações do canvas (parte que desenha)
         self.canvas = tk.Canvas(root, bg="white", width=600, height=600)
@@ -33,6 +37,8 @@ class Paint:
         self.forma = "retangulo"
     def oval(self):
         self.forma = "oval"
+    def circulo(self):
+        self.forma = "circulo"
 
     def inicio(self, event):
 
@@ -55,6 +61,20 @@ class Paint:
         elif self.forma == "retangulo":
 
             self.canvas.create_rectangle(self.ini_x, self.ini_y, self.fim_x, self.fim_y)
+        elif self.forma == "circulo":
+
+            raio = ( (self.ini_x - self.fim_x) **2 + (self.ini_y - self.fim_y) **2 ) ** 0.5
+            self.canvas.create_oval(self.ini_x - raio, self.ini_y - raio, self.ini_x + raio, self.ini_y + raio)
+        
+        
+        
+            
+        
+            
+            
+
+
+            
 
 #Configurações da interface
 root = tk.Tk()
@@ -64,4 +84,3 @@ obj = Paint(root)
 
 
 root.mainloop()
-
