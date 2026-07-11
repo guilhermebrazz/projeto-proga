@@ -1,6 +1,5 @@
 import tkinter as tk
-
-
+from tkinter import colorchooser
 
 class Paint:
 
@@ -13,6 +12,8 @@ class Paint:
         self.fim_y = None
         self.forma = None
         self.cor = None
+        self.cor_borda = "#000000"
+        self.cor_preenchimento = "#ffffff"
         #Menu de formas
         self.barra = tk.Frame(root)
         self.barra.pack()
@@ -29,7 +30,20 @@ class Paint:
         self.btn_c2.pack(side="left")
         self.btn_c3 = tk.Button(self.barra, text="Verde", command = self.verde)
         self.btn_c3.pack(side="left")
-        
+
+        tk.Label(self.barra, text=" Borda: ").pack(side="left")
+        self.botao_cor_borda = tk.Button(
+            self.barra, text="   ", bg=self.cor_borda, relief=tk.RIDGE, width=3,
+            command=self.escolher_cor_borda
+        )
+        self.botao_cor_borda.pack(side="left", padx=5)
+
+        tk.Label(self.barra, text=" Preenchimento: ").pack(side="left")
+        self.botao_cor_preenchimento = tk.Button(
+            self.barra, text="   ", bg=self.cor_preenchimento, relief=tk.RIDGE, width=3,
+            command=self.escolher_cor_preenchimento
+        )
+        self.botao_cor_preenchimento.pack(side="left", padx=5)
 
         #Configurações do canvas (parte que desenha)
         self.canvas = tk.Canvas(root, bg="white", width=600, height=600)
@@ -52,6 +66,20 @@ class Paint:
         self.cor = "red"
     def verde(self):
         self.cor = "green"
+
+    def escolher_cor_borda(self):
+        resultado = colorchooser.askcolor(color=self.cor_borda, title="Escolha a cor da borda")
+        cor_escolhida = resultado[1]
+        if cor_escolhida is not None:
+            self.cor_borda = cor_escolhida
+            self.botao_cor_borda.config(bg=self.cor_borda)
+
+    def escolher_cor_preenchimento(self):
+        resultado = colorchooser.askcolor(color=self.cor_preenchimento, title="Escolha a cor de preenchimento")
+        cor_escolhida = resultado[1]
+        if cor_escolhida is not None:
+            self.cor_preenchimento = cor_escolhida
+            self.botao_cor_preenchimento.config(bg=self.cor_preenchimento)
     
     def inicio(self, event):
 
