@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import colorchooser
+from figuras import * 
 
 class Paint:
 
@@ -97,15 +98,16 @@ class Paint:
         #mostra a figura
         if self.forma == "oval":
             
-            self.canvas.create_oval(self.ini_x, self.ini_y, self.fim_x, self.fim_y, fill= self.cor )
+            figura_atual = Oval(self.ini_x,self.ini_y,self.fim_x,self.fim_y, self.cor_borda, self.cor_preenchimento)
         
         elif self.forma == "retangulo":
 
-            self.canvas.create_rectangle(self.ini_x, self.ini_y, self.fim_x, self.fim_y, fill = self.cor)
+            figura_atual = Retangulo(self.ini_x,self.ini_y,self.fim_x,self.fim_y, self.cor_borda, self.cor_preenchimento)
         elif self.forma == "circulo":
 
-            raio = ( (self.ini_x - self.fim_x) **2 + (self.ini_y - self.fim_y) **2 ) ** 0.5
-            self.canvas.create_oval(self.ini_x - raio, self.ini_y - raio, self.ini_x + raio, self.ini_y + raio, fill = self.cor)
+            figura_atual = Circulo(self.ini_x,self.ini_y,self.fim_x,self.fim_y, self.cor_borda, self.cor_preenchimento)
+        if figura_atual is not None:
+            figura_atual.desenhar(self.canvas)
         
         
         
