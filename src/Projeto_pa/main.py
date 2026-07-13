@@ -14,6 +14,7 @@ class Paint:
         self.cor_borda = "#000000"
         self.cor_preenchimento = "#ffffff"
         self.figuras = []
+        self.pontos = []  # pontos do polígono sendo desenhado
 
         # Menu de formas
         self.barra = tk.Frame(root)
@@ -26,6 +27,9 @@ class Paint:
 
         self.btn_circulo = tk.Button(self.barra, text="Círculo", command=self.circulo)
         self.btn_circulo.pack(side="left")
+
+        self.btn_poligono = tk.Button(self.barra, text="Polígono", command=self.poligono)
+        self.btn_poligono.pack(side="left")
 
         tk.Label(self.barra, text=" Borda: ").pack(side="left")
         self.botao_cor_borda = tk.Button(
@@ -45,10 +49,10 @@ class Paint:
         self.canvas = tk.Canvas(root, bg="white", width=600, height=600)
         self.canvas.pack()
 
-    
         self.canvas.bind("<ButtonPress-1>", self.inicio)
         self.canvas.bind("<B1-Motion>", self.fim)
         self.canvas.bind("<ButtonRelease-1>", self.finalizar_figura)
+        self.canvas.bind("<Double-Button-1>", self.finalizar_poligono)
 
     # captura a forma escolhida quando é clicada no menu
     def retangulo(self):
@@ -59,6 +63,10 @@ class Paint:
 
     def circulo(self):
         self.forma = "circulo"
+
+    def poligono(self):
+        self.forma = "poligono"
+        self.pontos = []
 
     def escolher_cor_borda(self):
         resultado = colorchooser.askcolor(color=self.cor_borda, title="Escolha a cor da borda")
@@ -75,12 +83,16 @@ class Paint:
             self.botao_cor_preenchimento.config(bg=self.cor_preenchimento)
 
     def inicio(self, event):
-        
+        if self.forma == "poligono":
+            self.pontos.append((event.x, event.y))
+            self.redesenhar_tudo()
+            self.desenhar_preview_poligono()
+            return
+
         self.ini_x = event.x
         self.ini_y = event.y
 
     def criar_figura(self):
-        
         if self.forma == "oval":
             return Oval(self.ini_x, self.ini_y, self.fim_x, self.fim_y,
                         self.cor_borda, self.cor_preenchimento)
@@ -93,13 +105,20 @@ class Paint:
         return None
 
     def redesenhar_tudo(self):
-        
         self.canvas.delete("all")
         for figura in self.figuras:
             figura.desenhar(self.canvas)
 
+    def desenhar_preview_poligono(self):
+        for (x, y) in self.pontos:
+            self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill=self.cor_borda)
+        if len(self.pontos) >= 2:
+            self.canvas.create_line(self.pontos, fill=self.cor_borda)
+
     def fim(self, event):
-        # captura todas as coordenadas de x e de y enquanto o mouse se move e só mostra a atual
+        if self.forma == "poligono":
+            return
+
         self.fim_x = event.x
         self.fim_y = event.y
 
@@ -110,6 +129,8 @@ class Paint:
             figura_atual.desenhar(self.canvas)
 
     def finalizar_figura(self, event):
+        if self.forma == "poligono":
+            return
 
         self.fim_x = event.x
         self.fim_y = event.y
@@ -117,6 +138,13 @@ class Paint:
         figura_atual = self.criar_figura()
         if figura_atual is not None:
             self.figuras.append(figura_atual)
+            self.redesenhar_tudo()
+
+    def finalizar_poligono(self, event):
+        if self.forma == "poligono" and len(self.pontos) >= 3:
+            figura_atual = Poligono(self.pontos, self.cor_borda, self.cor_preenchimento)
+            self.figuras.append(figura_atual)
+            self.pontos = []
             self.redesenhar_tudo()
 
 
