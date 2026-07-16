@@ -1,6 +1,6 @@
 from modelo.figuras import Retangulo, Oval, Circulo, Poligono
 from modelo.desenho import Desenho
-from view import View
+from visao.view import View
 
 
 class Controller:
