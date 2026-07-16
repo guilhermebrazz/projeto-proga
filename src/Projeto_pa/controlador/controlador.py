@@ -1,4 +1,4 @@
-from modelo.figuras import Retangulo, Oval, Circulo, Poligono
+from modelo.figuras import Retangulo, Oval, Circulo, Poligono, Linha, Rabisco
 from modelo.desenho import Desenho
 from visao.view import View
 
@@ -25,6 +25,12 @@ class Controller:
 
     def circulo(self):
         self.forma = "circulo"
+
+    def linha(self):
+        self.forma = "linha"
+
+    def rabisco(self):
+        self.forma = "rabisco"
 
     def poligono(self):
         self.forma = "poligono"
@@ -53,6 +59,10 @@ class Controller:
             self.view.desenhar_preview_poligono(self.pontos, self.cor_borda)
             return
 
+        if self.forma == "rabisco":
+            self.pontos = [(event.x, event.y)]
+            return
+
         self.ini_x = event.x
         self.ini_y = event.y
 
@@ -63,10 +73,18 @@ class Controller:
             return Retangulo(self.ini_x, self.ini_y, self.fim_x, self.fim_y, self.cor_borda, self.cor_preenchimento)
         elif self.forma == "circulo":
             return Circulo(self.ini_x, self.ini_y, self.fim_x, self.fim_y, self.cor_borda, self.cor_preenchimento)
+        elif self.forma == "linha":
+            return Linha(self.ini_x, self.ini_y, self.fim_x, self.fim_y, self.cor_borda, self.cor_preenchimento)
         return None
 
     def fim(self, event):
         if self.forma == "poligono":
+            return
+
+        if self.forma == "rabisco":
+            self.pontos.append((event.x, event.y))
+            self.redesenhar_tudo()
+            Rabisco(self.pontos, self.cor_borda, self.cor_preenchimento).desenhar(self.view.canvas)
             return
 
         self.fim_x = event.x
@@ -79,6 +97,14 @@ class Controller:
 
     def finalizar_figura(self, event):
         if self.forma == "poligono":
+            return
+
+        if self.forma == "rabisco":
+            if len(self.pontos) >= 2:
+                figura_atual = Rabisco(self.pontos, self.cor_borda, self.cor_preenchimento)
+                self.desenho.adicionar_figura(figura_atual)
+            self.pontos = []
+            self.redesenhar_tudo()
             return
 
         self.fim_x = event.x

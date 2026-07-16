@@ -21,6 +21,12 @@ class View:
         self.btn_poligono = tk.Button(self.barra, text="Polígono", command=self.controller.poligono)
         self.btn_poligono.pack(side="left")
 
+        self.btn_linha = tk.Button(self.barra, text="Linha", command=self.controller.linha)
+        self.btn_linha.pack(side="left")
+
+        self.btn_rabisco = tk.Button(self.barra, text="Rabisco", command=self.controller.rabisco)
+        self.btn_rabisco.pack(side="left")
+
         tk.Label(self.barra, text=" Borda: ").pack(side="left")
         self.botao_cor_borda = tk.Button(
             self.barra, text="   ", bg="#000000", relief=tk.RIDGE, width=3,
