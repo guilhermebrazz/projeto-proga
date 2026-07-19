@@ -1,3 +1,4 @@
+from tkinter import filedialog
 from modelo import Figura, Oval, Retangulo, Circulo, Linha, Poligono, Rabisco
 from modelo.desenho import Desenho
 from visao.view import View
@@ -119,4 +120,20 @@ class Controller:
             figura_atual = Poligono(self.pontos, self.cor_borda, self.cor_preenchimento)
             self.desenho.adicionar_figura(figura_atual)
             self.pontos = []
+            self.redesenhar_tudo()
+
+    def salvar(self):
+        caminho = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("Arquivo JSON", "*.json")]
+        )
+        if caminho:
+            self.desenho.salvar(caminho)
+
+    def abrir(self):
+        caminho = filedialog.askopenfilename(
+            filetypes=[("Arquivo JSON", "*.json")]
+        )
+        if caminho:
+            self.desenho.carregar(caminho)
             self.redesenhar_tudo()
