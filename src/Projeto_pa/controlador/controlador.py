@@ -1,7 +1,6 @@
-from modelo.figuras import Retangulo, Oval, Circulo, Poligono, Linha, Rabisco
+from modelo import Figura, Oval, Retangulo, Circulo, Linha, Poligono, Rabisco
 from modelo.desenho import Desenho
 from visao.view import View
-
 
 class Controller:
     def __init__(self, root):
