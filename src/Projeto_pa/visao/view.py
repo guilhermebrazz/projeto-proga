@@ -27,6 +27,12 @@ class View:
         self.btn_rabisco = tk.Button(self.barra, text="Rabisco", command=self.controller.rabisco)
         self.btn_rabisco.pack(side="left")
 
+        self.btn_salvar = tk.Button(self.barra, text="Salvar", command=self.controller.salvar)
+        self.btn_salvar.pack(side="left")
+
+        self.btn_abrir = tk.Button(self.barra, text="Abrir", command=self.controller.abrir)
+        self.btn_abrir.pack(side="left")
+
         tk.Label(self.barra, text=" Borda: ").pack(side="left")
         self.botao_cor_borda = tk.Button(
             self.barra, text="   ", bg="#000000", relief=tk.RIDGE, width=3,
