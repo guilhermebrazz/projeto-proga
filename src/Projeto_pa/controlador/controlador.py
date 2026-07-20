@@ -1,7 +1,16 @@
 from tkinter import filedialog
-from modelo import Figura, Oval, Retangulo, Circulo, Linha, Poligono, Rabisco
+
 from modelo.desenho import Desenho
 from visao.view import View
+from .estados import (
+    EstadoRetangulo,
+    EstadoOval,
+    EstadoCirculo,
+    EstadoLinha,
+    EstadoPoligono,
+    EstadoRabisco,
+)
+
 
 class Controller:
     def __init__(self, root):
@@ -9,7 +18,7 @@ class Controller:
         self.ini_y = None
         self.fim_x = None
         self.fim_y = None
-        self.forma = None
+        self.estado = None
         self.cor_borda = "#000000"
         self.cor_preenchimento = "#ffffff"
         self.pontos = []
@@ -17,24 +26,27 @@ class Controller:
         self.desenho = Desenho()
         self.view = View(root, self)
 
+    def _definir_estado(self, estado):
+        self.estado = estado
+        self.estado.ao_selecionar(self)
+
     def retangulo(self):
-        self.forma = "retangulo"
+        self._definir_estado(EstadoRetangulo())
 
     def oval(self):
-        self.forma = "oval"
+        self._definir_estado(EstadoOval())
 
     def circulo(self):
-        self.forma = "circulo"
+        self._definir_estado(EstadoCirculo())
 
     def linha(self):
-        self.forma = "linha"
+        self._definir_estado(EstadoLinha())
 
     def rabisco(self):
-        self.forma = "rabisco"
+        self._definir_estado(EstadoRabisco())
 
     def poligono(self):
-        self.forma = "poligono"
-        self.pontos = []
+        self._definir_estado(EstadoPoligono())
 
     def escolher_cor_borda(self):
         cor_escolhida = self.view.pedir_cor(self.cor_borda, "Escolha a cor da borda")
@@ -53,74 +65,21 @@ class Controller:
         self.desenho.desenhar(self.view.canvas)
 
     def inicio(self, event):
-        if self.forma == "poligono":
-            self.pontos.append((event.x, event.y))
-            self.redesenhar_tudo()
-            self.view.desenhar_preview_poligono(self.pontos, self.cor_borda)
-            return
-
-        if self.forma == "rabisco":
-            self.pontos = [(event.x, event.y)]
-            return
-
-        self.ini_x = event.x
-        self.ini_y = event.y
-
-    def criar_figura(self):
-        if self.forma == "oval":
-            return Oval(self.ini_x, self.ini_y, self.fim_x, self.fim_y, self.cor_borda, self.cor_preenchimento)
-        elif self.forma == "retangulo":
-            return Retangulo(self.ini_x, self.ini_y, self.fim_x, self.fim_y, self.cor_borda, self.cor_preenchimento)
-        elif self.forma == "circulo":
-            return Circulo(self.ini_x, self.ini_y, self.fim_x, self.fim_y, self.cor_borda, self.cor_preenchimento)
-        elif self.forma == "linha":
-            return Linha(self.ini_x, self.ini_y, self.fim_x, self.fim_y, self.cor_borda, self.cor_preenchimento)
-        return None
+        if self.estado is not None:
+            self.estado.inicio(self, event)
 
     def fim(self, event):
-        if self.forma == "poligono":
-            return
-
-        if self.forma == "rabisco":
-            self.pontos.append((event.x, event.y))
-            self.redesenhar_tudo()
-            Rabisco(self.pontos, self.cor_borda, self.cor_preenchimento).desenhar(self.view.canvas)
-            return
-
-        self.fim_x = event.x
-        self.fim_y = event.y
-
-        figura_atual = self.criar_figura()
-        if figura_atual is not None:
-            self.redesenhar_tudo()
-            figura_atual.desenhar(self.view.canvas)
+        if self.estado is not None:
+            self.estado.mover(self, event)
 
     def finalizar_figura(self, event):
-        if self.forma == "poligono":
-            return
-
-        if self.forma == "rabisco":
-            if len(self.pontos) >= 2:
-                figura_atual = Rabisco(self.pontos, self.cor_borda, self.cor_preenchimento)
-                self.desenho.adicionar_figura(figura_atual)
-            self.pontos = []
-            self.redesenhar_tudo()
-            return
-
-        self.fim_x = event.x
-        self.fim_y = event.y
-
-        figura_atual = self.criar_figura()
-        if figura_atual is not None:
-            self.desenho.adicionar_figura(figura_atual)
-            self.redesenhar_tudo()
+        if self.estado is not None:
+            self.estado.finalizar(self, event)
 
     def finalizar_poligono(self, event):
-        if self.forma == "poligono" and len(self.pontos) >= 3:
-            figura_atual = Poligono(self.pontos, self.cor_borda, self.cor_preenchimento)
-            self.desenho.adicionar_figura(figura_atual)
-            self.pontos = []
-            self.redesenhar_tudo()
+        if self.estado is not None:
+            self.estado.duplo_clique(self, event)
+
 
     def salvar(self):
         caminho = filedialog.asksaveasfilename(
